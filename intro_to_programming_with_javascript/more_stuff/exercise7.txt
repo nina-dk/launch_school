@@ -1,4 +1,0 @@
-Exception handling is a way we can tell JavaScript how to deal with a possible
-exception/error that may occur in our program, using the try/catch[/finally]
-statement. That way, if an exception is raised, our program will deal with it
-the specified way and proceed with the rest of the code without breaking.

@@ -1,2 +1,0 @@
-There is a method called calculate_product that has two parameters
-and so requires two arguments but we've only provided one.

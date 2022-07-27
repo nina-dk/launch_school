@@ -1,3 +1,0 @@
-Exception handling is a way to handle the possible errors that will be thrown
-in a program, without exiting the program altogether. It is accomplished using
-the reserved words "begin", "rescue" and "end".

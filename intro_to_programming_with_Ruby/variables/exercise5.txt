@@ -1,7 +1,0 @@
-The first program will have an output of 3, as the variable x that
-was initialized in the outer scope was then incremented by 1 three times
-inside the .times method. 
-
-The second program will throw an error because the variable x was created
-inside the do/end block's scope and therefore is not accessible outside
-of the method.

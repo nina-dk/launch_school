@@ -1,2 +1,0 @@
-An Array is an ordered list of items, whereas a Hash is a list of key-value
-pairs for referencing by key.

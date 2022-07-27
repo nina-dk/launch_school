@@ -2,8 +2,8 @@
 TAexercises/
 TAing/
 projects/js189-app
-./*.js
-./*.html
-./*.txt
-./*.sh
+*.js
+*.html
+*.txt
+*.sh
 *-prep/
