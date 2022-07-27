@@ -1,0 +1,3 @@
+There is an opening curly brace somewhere in our program that 
+hasn't been closed with a closing curly brace, thus creating 
+an error.

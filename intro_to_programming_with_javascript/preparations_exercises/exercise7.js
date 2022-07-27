@@ -1,0 +1,1 @@
+// Acceptable function names: index, CatName, lazyDog, operand2.
