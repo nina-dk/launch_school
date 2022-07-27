@@ -1,0 +1,56 @@
+body {
+  background-color: #4CC6AB;
+  font-family: "Arial", sans-serif;
+  print-color-adjust: exact !important;
+  -webkit-print-color-adjust: exact !important;
+}
+
+#content {
+  background-color: white;
+  color:#239A7D;
+  margin: 4em auto;
+  max-width: 500px;
+  padding: 1.5em 1.1em;
+}
+
+h1 {
+  color: #C71236;
+  margin-top: 0.9em;
+  text-align: center;
+}
+
+fieldset {
+  border: none;
+  padding: 0;
+}
+
+label {
+  font-weight: bold;
+}
+
+input {
+  display: block;
+  font-size: 18px;
+  height: 2.2em;
+  margin: 1.1em 0;
+  width: 100%;
+}
+
+input[name="quantity"] {
+  width: 4em;
+}
+
+input[type="submit"] {
+  background: linear-gradient(#C71236, #7F243A);
+  border: 1px outset #5f1b2c;
+  border-radius: 0.5em;
+  color: white;
+  height: 3.2em;
+  padding: 1em;
+}
+
+@media print {
+  form {
+    display: none;
+  }
+}

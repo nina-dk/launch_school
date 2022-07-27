@@ -1,0 +1,18 @@
+{
+  "name": "loan_calculator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "finalhandler": "^1.1.2",
+    "handlebars": "^4.7.7",
+    "router": "^1.3.5",
+    "serve-static": "^1.14.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "ipaddress": "ip -4 addr show eth0"
+  },
+  "author": "",
+  "license": "ISC"
+}

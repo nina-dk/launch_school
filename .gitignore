@@ -1,0 +1,9 @@
+**/node_modules/
+TAexercises/
+TAing/
+projects/js189-app
+*.js
+*.html
+*.txt
+*.sh
+*-prep/

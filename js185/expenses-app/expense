@@ -1,0 +1,201 @@
+#!/usr/bin/env node
+const exp = require("constants");
+const { Client } = require("pg");
+const PROCESS = require("process");
+const READLINE = require("readline");
+
+class CLI {
+  static HELP() {
+    return `An expense recording system
+  
+Commands:
+    
+add AMOUNT MEMO [DATE] - record a new expense
+clear - delete all expenses
+list - list all expenses
+delete NUMBER - remove expense with id NUMBER
+search QUERY - list expenses with a matching memo field`;
+  }
+
+  constructor() {
+    this.app = new ExpenseData();
+  }
+
+  displayHelp() {
+    console.log(CLI.HELP());
+  }
+
+  run() {
+    let command = PROCESS.argv[2];
+    switch (command) {
+      case "list": this.app.listExpenses(); break;
+      case "add": this.app.addExpense(); break;
+      case "search": this.app.searchExpenses(); break;
+      case "delete": this.app.deleteExpense(); break;
+      case "clear":
+        let rl = READLINE.createInterface({
+          input: PROCESS.stdin,
+          output: PROCESS.stdout
+        });
+
+        rl.question("This will remove all expenses. Are you sure? (y/n)\n", async answer => {
+          if (answer === "y") this.app.deleteAllExpenses();
+          rl.close();
+        });
+        break;
+      default: this.displayHelp();
+    }
+  }
+}
+
+class ExpenseData {
+  constructor() {
+    this.client = new Client({
+      host: "/var/run/postgresql",
+      user: "ninadk",
+      database: "expenses_app",
+      port: 5432
+    });
+  }
+
+  async setupSchema() {
+    try {
+      let existsQuery = `SELECT COUNT(*) FROM information_schema.tables
+                          WHERE table_schema = 'public' AND table_name = 'expenses'`;
+      let res = await this.client.query(existsQuery);
+      let count = Number(res.rows[0].count);
+      if (!count) {
+        let schema = `CREATE TABLE expenses (
+          id serial PRIMARY KEY,
+          amount numeric(6, 2) NOT NULL,
+          memo text NOT NULL,
+          created_on date NOT NULL,
+          CHECK (amount > 0))`;
+        await this.client.query(schema);
+      }
+    } catch (err) {
+      this.logAndExit(err);
+    }
+  }
+
+  async listExpenses() {
+    try {
+      await this.client.connect();
+      await this.setupSchema();
+      let expenses = await this.client.query("SELECT * FROM expenses ORDER BY created_on");
+      this.countExpenses(expenses);
+      this.displayExpenses(expenses);
+      await this.client.end();
+    } catch (err) {
+      this.logAndExit(err);
+    }
+  }
+  
+  async addExpense() {
+    try {
+      let [ amount, memo, date ] = [PROCESS.argv[3], PROCESS.argv[4], PROCESS.argv[5]];
+      if (!amount || !memo) throw new Error("You must provide an amount and memo.");
+      if (!date) date = "NOW()";
+  
+      await this.client.connect();
+      await this.setupSchema();
+      await this.client.query(
+        `INSERT INTO expenses (amount, memo, created_on)
+              VALUES ($1, $2, $3)`,
+        [amount, memo, date]);
+  
+      await this.client.end();
+    } catch(err) {
+      this.logAndExit(err);
+    }
+  }
+
+  async searchExpenses() {
+    try {
+      let searchTerm = PROCESS.argv[3];
+      if (!searchTerm) throw new Error("You must provide a search term.");
+
+      await this.client.connect();
+      await this.setupSchema();
+      let queryText = "SELECT * FROM expenses WHERE memo ILIKE '%' || $1 || '%'";
+      let results = await this.client.query(queryText, [searchTerm]);
+      this.countExpenses(results);
+      this.displayExpenses(results);
+      await this.client.end();
+    } catch (err) {
+      this.logAndExit(err);
+    }
+  }
+
+  async deleteExpense() {
+    try {
+      let id = PROCESS.argv[3];
+      if (!id) throw new Error("You must provide the id of the item you wish to delete.");
+
+      await this.client.connect();
+      await this.setupSchema();
+
+      let recordToDelete = await this.client.query(`SELECT * FROM expenses WHERE id = $1`, [id]);
+      if (recordToDelete.rows.length === 1) {
+        await this.client.query(`DELETE FROM expenses WHERE id = $1`, [id]);
+        console.log("The following expense has been deleted:");
+        this.displayExpenses(recordToDelete);
+      } else {
+        console.log(`There is no expense with the id "${id}".`);
+      }
+      await this.client.end();
+    } catch (err) {
+      this.logAndExit(err);
+    }
+  }
+
+  async deleteAllExpenses() {
+    try {
+      await this.client.connect();
+      await this.setupSchema();
+      await this.client.query("DELETE FROM expenses");
+      console.log("All expenses have been deleted.");
+      await this.client.end();
+    } catch (err) {
+      this.logAndExit(err);
+    }
+  }
+
+  countExpenses(expenses) {
+    let count = expenses.rows.length;
+    switch (count) {
+      case 0: console.log("There are no expenses."); break;
+      case 1: console.log("There is 1 expense."); break;
+      default: console.log(`There are ${count} expenses.`);
+    }
+  }
+
+  sumExpenses(expenses) {
+    return expenses.rows.reduce((total, item) => total + Number(item.amount), 0);
+  }
+
+  displayExpenses(expenses) {
+    let result = expenses.rows.map(row => {
+      return `${String(row.id).padStart(3)} | ` +
+        `${row.created_on.toDateString().padStart(13)} | ` +
+        `${row.amount.padStart(6)} | ${row.memo}`;
+    });
+
+    result.forEach(line => console.log(line));
+
+    let total = this.sumExpenses(expenses);
+    if (total) {
+      let maxLength = result.slice().sort((a, b) => b.length - a.length)[0].length;
+      console.log("-".repeat(maxLength));
+      console.log(`Total ${String(this.sumExpenses(expenses)).padStart(24)}`);
+    }
+  }
+
+  logAndExit(failedPromise) {
+    console.log(failedPromise);
+    PROCESS.exit(1);
+  }
+}
+
+let cli = new CLI();
+cli.run();

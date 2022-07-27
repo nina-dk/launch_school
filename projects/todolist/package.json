@@ -1,0 +1,22 @@
+{
+  "name": "todolistninadk",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "babel": "babel lib --out-dir dist --presets=@babel/preset-env"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.14.8",
+    "@babel/core": "^7.15.0",
+    "@babel/preset-env": "^7.15.0",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.32.0"
+  }
+}
