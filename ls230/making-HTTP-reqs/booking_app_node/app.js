@@ -24,19 +24,26 @@ app.use('/api', apiRouter);
 app.get("/new-staff", (_, res) => {
   res.render("new-staff", { 
     title: "New Staff Member",
-    url: "/api/staff_members" });
+    url: "/api/staff_members"
+  });
 });
 
 app.get("/add-schedule", (_, res) => {
   res.render("add-schedule", { 
     title: "Add Schedule",
-    url: "/api/schedules" });
+    url: "/api/schedules"
+  });
+});
+
+app.get("/get-schedules", (_, res) => {
+  res.render("get-schedules", { title: "Schedules" });
 });
 
 app.get("/book-schedule", (_, res) => {
   res.render("book-schedule", { 
     title: "Book a Schedule",
-    url: "/api/bookings" });
+    url: "/api/bookings"
+  });
 });
 
 app.get("/bookings", (_, res) => {

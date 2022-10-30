@@ -69,6 +69,7 @@ class Autocomplete {
         break;
       case 'Tab':
         if (this.bestMatchIndex !== null && this.matches.length !== 0) {
+          event.preventDefault();
           this.input.value = this.matches[this.bestMatchIndex].name;
         }
         this.reset();
@@ -161,7 +162,7 @@ class Autocomplete {
 
 document.addEventListener('DOMContentLoaded', () => {
   let input = document.querySelector("input");
-  let autocomplete = new Autocomplete(input, "/countries?matching=");
+  new Autocomplete(input, "/countries?matching=");
 });
 
 // const Autocomplete = {

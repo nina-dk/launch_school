@@ -1,77 +1,82 @@
 let scheduleCount = 1;
-function emptyInputValues(fieldset) {
-  Array.from(fieldset.querySelectorAll("input"))
-       .forEach(input => input.value = "");
-}
 
-function addNewFieldset(form) {
-  scheduleCount += 1;
-  let fieldset = form.querySelector("fieldset");
-  let newFieldset = fieldset.cloneNode(true);
-  let count = newFieldset.querySelector("#scheduleCount");
-  count.innerText = scheduleCount;
-  emptyInputValues(newFieldset);
-  form.insertBefore(newFieldset, form.children[form.children.length - 1]);
-}
-
-document.addEventListener("DOMContentLoaded", e => {
+document.addEventListener("DOMContentLoaded", _ => {
   let form = document.querySelector("form");
-  let addScheduleBtn = document.getElementById("add-form-btn");
-  let staffDropdown = form.querySelector("select");
+  let addScheduleBtn = document.querySelector("#add-form-btn");
 
-  let staff;
-  let staffReq = new XMLHttpRequest();
-  staffReq.open("GET", "/api/staff_members");
-  staffReq.responseType = "json";
-  staffReq.addEventListener("load", _ => {
-    staff = staffReq.response;
-    staff.map(({id, name}) => ({id, name}))
-         .forEach(({id, name}) => {
-          let option = document.createElement("option");
-          option.value = id;
-          option.innerText = name;
-          staffDropdown.appendChild(option);
-        });
-  });
+  populateStaffMembersSelect();
 
-  staffReq.send();
-
-  addScheduleBtn.addEventListener("click", e => {
-    e.preventDefault();
-    let req = new XMLHttpRequest();
-    req.open("GET", "/add-schedule");
-    req.addEventListener("load", _ => addNewFieldset(form));
-    req.send();
-  });
-
-  form.addEventListener("submit", e => {
-    e.preventDefault();
-
-    let data = { schedules: [] }
-    let fieldValues = Array.from(form.children)
-                           .filter(child => child instanceof HTMLFieldSetElement)
-                           .map(({children}) => 
-                            Array.from(children)
-                                 .slice(1)
-                                 .map(({children}) => children[1]));
-                                                
-    fieldValues.forEach(([ staffName, date, time ]) => {
-      data.schedules.push({
-        staff_id: staffName.value,
-        date: date.value,
-        time: time.value
-      });
-    });
-
-    let req = new XMLHttpRequest();
-    req.open(form.method, form.action);
-    req.setRequestHeader("Content-Type", "application/json");
-
-    req.addEventListener("load", _ => {
-      if (req.status === 201) form.reset();
-      alert(req.responseText);
-    });
-
-    req.send(JSON.stringify(data));
-  });
+  addScheduleBtn.addEventListener("click", addNewFieldset);
+  form.addEventListener("submit", addSchedules);
 });
+
+function populateStaffMembersSelect() {
+  let staffMembers = null;
+  let req = new XMLHttpRequest();
+  req.open("GET", "/api/staff_members");
+  req.responseType = "json";
+  
+  req.addEventListener("load", e => {
+    staffMembers = req.response;
+    populateSelect(staffMembers);
+  });
+
+  req.send();
+}
+
+function populateSelect(staffMembers) {
+  let select = document.querySelector("select");
+  staffMembers.forEach(({ id, name }) => {
+    let option = document.createElement("option");
+    option.textContent = name;
+    option.value = id;
+    select.append(option);
+  });
+}
+
+function addNewFieldset() {
+  let fieldset = document.querySelector("fieldset");
+  let submitFormBtn = document.querySelector("input[type='submit'");
+  let newFieldset = fieldset.cloneNode(true);
+  resetFieldset(newFieldset);
+  scheduleCount += 1;
+
+  newFieldset.querySelector("#scheduleCount").textContent = scheduleCount;
+  submitFormBtn.insertAdjacentElement("beforebegin", newFieldset);
+}
+
+function resetFieldset(fieldset) {
+  [...fieldset.elements].forEach(field => {
+    if (field.tagName === "INPUT") field.value = "";
+  });
+}
+
+function addSchedules(e) {
+  e.preventDefault();
+
+  let data = formatData();
+  let req = new XMLHttpRequest();
+  req.open("POST", "/api/schedules");
+  req.setRequestHeader("Content-Type", "application/json");
+  req.addEventListener("load", _ => {
+    if (req.status === 201) e.target.reset();
+    alert(req.response);
+  });
+
+  req.send(JSON.stringify(data));
+}
+
+function formatData() {
+  let formattedData = { schedules: [] };
+  let fieldsets = [...document.querySelectorAll("fieldset")];
+
+  fieldsets.forEach(({elements}) => {
+    formattedData.schedules.push({
+      staff_id: elements.staffName.value,
+      date: elements.date.value,
+      time: elements.time.value
+    });
+  });
+
+  return formattedData;
+}

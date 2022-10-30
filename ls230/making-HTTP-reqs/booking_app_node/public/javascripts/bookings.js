@@ -1,61 +1,108 @@
-document.addEventListener("DOMContentLoaded", async _ => {
-  let bookings = await getBookings();
-  createBookingsList(bookings);
+document.addEventListener("DOMContentLoaded", _ => App.init());
 
-  document.addEventListener("click", e => {
-    let clicked = e.target;
-    if (clicked.tagName === "A") {
-      e.preventDefault();
-      let req = new XMLHttpRequest();
-      req.open("GET", clicked.href);
-      req.responseType = "json";
-      req.addEventListener("load", _ => {
-        let dateLi = clicked.parentElement;
-        let nestedList = bookingsDetailsList(req.response);
-        dateLi.appendChild(nestedList);
+let App = {
+  schedules: null,
+
+  init() {
+    this.buildDatesList();
+    this.getSchedules();
+    document.querySelector("ul").addEventListener("click", this.handleDateClick.bind(this));
+  },
+
+  handleDateClick(e) {
+    if (e.target.tagName !== "A") return;
+
+    e.preventDefault();
+    if (e.target.parentElement.children.length > 1) return;
+    this.addSublistToPage(e.target);
+  },
+
+  async getSchedules() {
+    this.schedules = await fetch("/api/schedules").then(res => res.json());
+  },
+
+  getBookedDates() {
+    return fetch("/api/bookings").then(res => res.json()).catch(console.log);
+  },
+
+  async buildDatesList() {
+    let list = document.querySelector("#bookedDates");
+    let dates = await this.getBookedDates();
+
+    dates.forEach(date => {
+      let anchorTag = document.createElement("a");
+      anchorTag.href = `/api/bookings/${date}`;
+      anchorTag.textContent = date;
+
+      let li = document.createElement("li");
+      li.appendChild(anchorTag);
+      list.appendChild(li);
+    });
+  },
+
+  async buildBookingsList(path) {
+    let list = document.createElement("ul");
+    let bookings = await this.getBookingsFor(path);
+    let bookingDate = path.match(/(\d{2}-){2}\d{2}/)[0];
+
+    if (bookings.length === 0) return null;
+
+    bookings.forEach(booking => {
+      let schedule = this.schedules.find(({student_email, date, time}) => {
+        return booking[1] === student_email && booking[2] === time &&
+          (bookingDate === date || bookingDate === date.slice(2));
       });
 
-      req.send();
-    }
-  });
-});
+      let li = document.createElement("li");
+      li.textContent = booking.join(" | ");
+      li.id = schedule.id;
 
-async function getBookings() {
-  return new Promise((resolve, reject) => {
-    let req = new XMLHttpRequest();
-    req.open("GET", "/api/bookings");
-    req.responseType = "json";
-    req.addEventListener("load", _ => {
-      if (req.status === 200) resolve(req.response);
-      else reject(req.response);
+      let cancelBtn = document.createElement("button");
+      cancelBtn.textContent = "Cancel booking";
+
+      li.appendChild(cancelBtn);
+      list.appendChild(li);
     });
 
-    req.send();
-  });
-}
+    return list;
+  },
 
-function bookingsDetailsList(bookings) {
-  let list = document.createElement("ul");
-  bookings.forEach(([name, email, time]) => {
-    let li = document.createElement("li");
-    li.innerText = `${name} | ${email} | ${time}`;
+  cancelBooking(bookingId) {
+    fetch(`/api/bookings/${bookingId}`, {
+      method: "PUT",
+      body: bookingId
+    }).then(res => {
+      if (res.status === 204) return `Booking canceled: ${bookingId}.`;
+      else return res.text()
+    }).then(response => alert(response));
+  },
 
-    list.appendChild(li);
-  });
+  getBookingsFor(path) {
+    return fetch(path).then(res => res.json()).catch(console.log);
+  },
 
-  return list;
-}
+  async addSublistToPage(link) {
+    let sublist = await this.buildBookingsList(link.href);
+    if (!sublist) return link.parentElement.remove();
 
-function createBookingsList(bookings) {
-  let list = document.createElement("ul");
-  bookings.forEach(date => {
-    let li = document.createElement("li");
-    let a = document.createElement("a");
-    a.href = `/api/bookings/${date}`;
-    a.innerText = date;
-    li.appendChild(a);
-    list.appendChild(li);
-  });
+    link.parentElement.appendChild(sublist);
 
-  document.body.appendChild(list);
-}
+    sublist.addEventListener("click", e => {
+      if (e.target.tagName !== "BUTTON") return;
+      
+      let id = e.target.parentElement.id;
+      this.cancelBooking(id);
+      this.refreshSublist(e.target.closest("ul").parentElement);
+    });
+  },
+
+  refreshSublist(li) {
+    this.removeSublist(li);
+    this.addSublistToPage(li.querySelector("a"));
+  },
+
+  removeSublist(li) {
+    let sublist = li.children[1];
+    if (sublist) li.removeChild(sublist);
+  }
+};

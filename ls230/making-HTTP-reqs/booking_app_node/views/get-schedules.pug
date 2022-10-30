@@ -1,0 +1,13 @@
+extends layout
+
+block scripts
+  script(src="/javascripts/getting-schedules.js")
+
+block content
+  form(method="POST" action="#")
+    h2 Cancel schedule
+    fieldset
+      p
+        label(for="scheduleId") Schedule ID:
+        input(name="scheduleId" type="text" pattern="\\d+" required)
+    input(type="submit" value="Cancel")

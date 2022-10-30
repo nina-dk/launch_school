@@ -1,3 +1,5 @@
+document.addEventListener("DOMContentLoaded", _ => getFormData());
+
 function getFormData() {
   let form = document.querySelector("form");
 
@@ -10,7 +12,7 @@ function getFormData() {
 
     req.addEventListener("load", _ => {
       if (req.status === 201) {
-        alert(`Successfully created staff with id: ${JSON.parse(req.response).id}`);
+        alert(`Successfully created staff with id: ${JSON.parse(req.response).id}.`);
       } else if (req.status === 400) {
         alert(req.responseText);
       }
@@ -19,5 +21,3 @@ function getFormData() {
     req.send(data);
   });
 }
-
-document.addEventListener("DOMContentLoaded", _ => getFormData());
