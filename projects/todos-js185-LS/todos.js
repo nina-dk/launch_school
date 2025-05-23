@@ -19,6 +19,7 @@ app.set("view engine", "pug");
 app.use(morgan("common"));
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: false }));
+
 app.use(session({
   cookie: {
     httpOnly: true,
@@ -37,15 +38,12 @@ app.use(flash());
 
 // Create a new datastore
 app.use((req, res, next) => {
-  console.log("this runs first");
   res.locals.store = new PgPersistence(req.session);
   next();
 });
 
 // Extract session info
 app.use((req, res, next) => {
-  console.log("then we extract the session info");
-  console.log("this is res.locals", res.locals);
   res.locals.username = req.session.username;
   res.locals.signedIn = req.session.signedIn;
   res.locals.flash = req.session.flash;
@@ -110,6 +108,7 @@ app.post("/lists",
     let todoListTitle = req.body.todoListTitle;
 
     const rerenderNewList = () => {
+      throw new Error("oopsie")
       res.render("new-list", {
         todoListTitle,
         flash: req.flash(),
@@ -138,19 +137,36 @@ app.post("/lists",
 // Render individual todo list and its todos
 app.get("/lists/:todoListId",
   requiresAuthentication,
-  catchError(async (req, res) => {
-    let todoListId = req.params.todoListId;
-    let todoList = await res.locals.store.loadTodoList(+todoListId);
-    if (todoList === undefined) throw new Error("Not found.");
+  async (req, res, next) => {
+    try {
+      let todoListId = req.params.todoListId;
+      let todoList = await res.locals.store.loadTodoList(+todoListId);
+      if (todoList === undefined) {
+        throw new Error("Not found.");
+      } else {
+  //    todoList.todos = res.locals.store.sortedTodos(todoList);
+  
+        res.render("list", {
+          todoList,
+          isDoneTodoList: res.locals.store.isDoneTodoList(todoList),
+          hasUndoneTodos: res.locals.store.hasUndoneTodos(todoList),
+        });
+      }
+    } catch (error) {
+      next(error);
+    }
+  //   let todoListId = req.params.todoListId;
+  //   let todoList = await res.locals.store.loadTodoList(+todoListId);
+  //   if (todoList === undefined) throw new Error("Not found.");
 
-    todoList.todos = await res.locals.store.sortedTodos(todoList);
+  //   todoList.todos = await res.locals.store.sortedTodos(todoList);
 
-    res.render("list", {
-      todoList,
-      isDoneTodoList: res.locals.store.isDoneTodoList(todoList),
-      hasUndoneTodos: res.locals.store.hasUndoneTodos(todoList),
-    });
-  })
+  //   res.render("list", {
+  //     todoList,
+  //     isDoneTodoList: res.locals.store.isDoneTodoList(todoList),
+  //     hasUndoneTodos: res.locals.store.hasUndoneTodos(todoList),
+  //   });
+  }
 );
 
 // Toggle completion status of a todo
@@ -294,10 +310,10 @@ app.post("/lists/:todoListId/edit",
       let errors = validationResult(req);
       if (!errors.isEmpty()) {
         errors.array().forEach(message => req.flash("error", message.msg));
-        rerenderEditList();
+        await rerenderEditList();
       } else if (await store.existsTodoListTitle(todoListTitle)) {
         req.flash("error", "The list title must be unique.");
-        rerenderEditList();
+        await rerenderEditList();
       } else {
         let updated = await store.setTodoListTitle(+todoListId, todoListTitle);
         if (!updated) throw new Error("Not found.");
@@ -308,7 +324,7 @@ app.post("/lists/:todoListId/edit",
     } catch (error) {
       if (store.isUniqueConstraintViolation(error)) {
         req.flash("error", "The list title must be unique.");
-        rerenderEditList();
+        await rerenderEditList();
       } else {
         throw error;
       }

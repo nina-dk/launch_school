@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Cars for Sale</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+    <script src="app.js"></script>
+  </head>
+  <body>
+    <nav>
+      <h1>Buy Used Cars</h1>
+      <form id="selects"></form>
+    </nav>
+    <main>
+      <div id="cars"></div>
+    </main>
+    </figcaption>
+    <script id="add_cars" type="text/x-handlebars">
+      {{#each cars}}
+        {{> add_car }}
+      {{/each}}
+    </script>
+    <script id="add_car" data-type="partial" type="text/x-handlebars">
+      <figure>
+        <img src={{this.image}}>
+        <figcaption>
+          <h2>{{this.make}} {{this.model}}</h2>
+          <p>Year: {{this.year}}</p>
+          <p>Price: ${{this.price}}</p>
+          <button>Buy</button>
+      </figure>
+    </script>
+    <script id="populate_select" data-type="partial" type="text/x-handlebars">
+      <label for={{this.type}}>{{ capitalizeType this.type }}</label>
+      <select name={{this.type}}>
+        <option value="">
+          {{#if (isMakeOrModel this.type)}}
+            All
+          {{else}}
+            Any
+          {{/if}}
+        </option>
+        {{#each this.options}}
+          <option value={{this}}>{{this}}</option>
+        {{/each}}
+      </select>
+    </script>
+    <script id="selects_form" type="text/x-handlebars">
+      <fieldset>
+        {{#each selects}}
+          {{> populate_select }}
+        {{/each}}
+        <input type="submit" value="Filter">
+      </fieldset>
+  </script>
+  </body>
+</html>

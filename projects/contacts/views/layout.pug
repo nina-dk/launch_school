@@ -11,6 +11,7 @@ html(lang="en-US")
       h1 My Contacts Manager
 
       - let messageTypes = Object.keys(flash || {});
+      - console.log('in layout view', flash);
       if messageTypes.length > 0
         ul
           each messageType in messageTypes

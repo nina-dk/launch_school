@@ -1,0 +1,16 @@
+extends layout 
+
+block scripts 
+  script(src="/javascripts/cancel-schedule.js")
+
+block content 
+  h1 Cancel Schedule 
+  form(action="/api/schedules/")
+    fieldset 
+      label(for="scheduleId") 
+      input(name="scheduleId"
+            type="text"
+            title="ID has to be a number."
+            pattern="\\d+"
+            required)
+    input(type="submit" value="Cancel")

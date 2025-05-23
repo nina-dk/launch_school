@@ -144,6 +144,8 @@ app.post("/lists/:todoListId/todos", [
   } else {
     todoList.add(new Todo(req.body.todoTitle));
     req.flash("success", "The todo has been created!");
+    console.log(req.flash("success"));
+    console.log(req.flash("success"));
     res.redirect(`/lists/${req.params.todoListId}`);
   }
 });

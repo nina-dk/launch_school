@@ -1,0 +1,41 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+fieldset {
+  border: lightgray 4px double;
+}
+
+label {
+  color: #D84251;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+input {
+  margin: 8px;
+}
+
+input[type="submit"], #add-form-btn {
+  background-color: #D84251;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  height: 4rem;
+  width: 8rem;
+}
+
+#add-form-btn {
+  background-color: #65ADDB;
+  margin-bottom: 8px;
+}
+
+#add-student-container {
+  background-color: lightgray;
+  padding: 16px;
+}

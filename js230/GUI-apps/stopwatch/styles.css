@@ -1,0 +1,31 @@
+body {
+  background-color: mediumslateblue;
+  color: whitesmoke;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+main {
+  margin: 12em auto;
+  max-width: max-content;
+}
+
+h1 {
+  font-size: 5em;
+  font-weight: 900;
+  margin-bottom: 0.4em;
+}
+
+.button-container {
+  margin: auto;
+  width: max-content;
+}
+
+button {
+  background-color: transparent;
+  border: 1px solid whitesmoke;
+  border-radius: 6px;
+  color: inherit;
+  cursor: pointer;
+  margin: 1em;
+  padding: 1em 2.3em;
+}

@@ -1,0 +1,15 @@
+extends layout 
+
+block scripts
+  script(src="/javascripts/new-staff.js")
+
+block content
+  form(method="POST" action=`${url}`)
+    fieldset
+      p
+        label(for="email") Email:
+        input(name="email" type="email")
+      p
+        label(for="name") Name:
+        input(name="name" type="text")
+    input(type="submit" value="Submit")

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Form Validation</title>
+    <script src="validation.js"></script>
+    <style>
+      #formError {
+        display: none;
+      }
+
+      .invalid {
+        border: 1px solid red;
+      }
+
+      .error {
+        color: red;
+      }
+
+      button {
+        margin: 1em 0;
+        padding: 0.4em 1em;
+      }
+
+      span {
+        margin-left: 1em;
+      }
+
+      dd {
+        margin-left: 0;
+      }
+
+      input[name="creditCard"] {
+        width: 3em;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Sign Up</h1>
+    <form action="#" method="post" novalidate>
+      <fieldset>
+        <p id="formError" class="error">Form cannot be submitted until errors are corrected.</p>
+        <dl>
+          <dt>
+            <label for="firstName">First name</label>
+          </dt>
+          <dd>
+            <input type="text" name="firstName" pattern="[a-zA-Z'\s]{1,}" required>
+          </dd>
+          <dt>
+            <label for="lastName">Last name</label>
+          </dt>
+          <dd>
+            <input type="text" name="lastName" pattern="[a-zA-Z'\s]{1,}" required>
+          </dd>
+          <dt>
+            <label for="email">Email</label>
+          </dt>
+          <dd>
+            <input type="email" name="email" pattern=".+@.+" required>
+          </dd>
+          <dt>
+            <label for="password">Password</label>
+          </dt>
+          <dd>
+            <input type="password" name="password" minlength="10" required>
+          </dd>
+          <dt>
+            <label for="phone">Phone</label>
+          </dt>
+          <dd>
+            <input type="tel" name="phone" placeholder="###-###-####" pattern="\d{3}-\d{3}-\d{4}">
+          </dd>
+          <dt>
+            <label for="creditCard">Credit Card</label>
+          </dt>
+          <dd>
+            <input type="text" name="creditCard" placeholder="####" maxlength="4" pattern="\d{4}"> -
+            <input type="text" name="creditCard" placeholder="####" maxlength="4" pattern="\d{4}"> -
+            <input type="text" name="creditCard" placeholder="####" maxlength="4" pattern="\d{4}"> -
+            <input type="text" name="creditCard" placeholder="####" maxlength="4" pattern="\d{4}">
+          </dd>
+          <button type="submit">Sign Up</button>
+        </dl>
+      </fieldset>
+    </form>
+  </body>
+</html>

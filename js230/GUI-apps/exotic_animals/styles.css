@@ -1,0 +1,40 @@
+body {
+  background-color: darkblue;
+}
+
+.grid-container {
+  background-color: #892b2b;
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  margin: 50px auto;
+  width: 80%;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  margin: auto;
+}
+
+figure {
+  position: relative;
+}
+
+figcaption {
+  display: none;
+  /* opacity: 0;
+  transition: opacity 500ms; */
+}
+
+.show {
+  background: rgb(229, 226, 151, 0.8);
+  border: 1px solid black;
+  border-radius: 8px;
+  display: block;
+  /* opacity: 1; */
+  padding: 8px 9px;
+  position: absolute;
+  bottom: -50px;
+  z-index: 2;
+}

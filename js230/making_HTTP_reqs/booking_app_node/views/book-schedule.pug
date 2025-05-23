@@ -1,0 +1,32 @@
+extends layout
+
+block scripts
+  script(src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js")
+  script(src="/javascripts/book-schedule.js")
+
+block content
+  h1 Schedules
+
+  form(method="POST" action=`${url}`)
+    fieldset
+      p
+        label(for="schedule") Please select one schedule: 
+        select(name="schedule")    
+      p
+        label(for="email") Email:
+        input(name="email" type="email" required)
+    input(type="submit" value="Submit")
+  script(id="newStudentForm" type="text/x-handlebars-template")
+    form(method="POST" action="/api/students" id="registerStudent")
+      fieldset
+        h2 Please provide new student details    
+        p
+          label(for="email") Email:
+          input(name="email" type="email" value="{{email}}")
+        p
+          label(for="name") Name: 
+          input(name="name") 
+        p
+          label(for="bookingSeq") Booking Sequence: 
+          input(name="bookingSeq" value="{{bookingSeq}}" disabled) 
+      input(type="submit" value="Submit")

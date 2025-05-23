@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"
+            integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+            crossorigin="anonymous"></script>
+    <script src="index.js"></script>
+    <style>
+      body {
+        margin: auto;
+        max-width: 600px;
+      }
+
+      #accordion {
+        background-color: pink;
+        border-radius: 8px;
+        margin: 5px auto;
+        padding: 8px;
+        width: 150px;
+        height: 70px;
+      }
+
+      #toggle {
+        background-color: aquamarine;
+        border-radius: 8px;
+        border: 1px lightseagreen solid;
+        color: white;
+        font-size: 20px;
+        font-family: sans-serif;
+        display: block;
+        margin: 10px auto;
+        padding: 13px 24px;
+        text-decoration: none;
+        width: 60px;
+        height: 30px;
+      }
+
+      #toggle:active {
+        border: 0px;
+      }
+    </style>
+  </head>
+  <body>
+    <form method="post" action="#">
+      <input type="text" maxlength="1">
+      <input type="submit" value="Submit">
+    </form>
+    <a href="#" id="toggle">Toggle</a>
+    <div id="accordion">
+      <p>Accordion</p>
+    </div>
+  </body>
+</html>

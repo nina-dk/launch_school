@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+      ul {
+        pointer-events: all;
+        padding: 0;
+      }
+
+      li::after { display: none; }
+
+      .menu_box {
+        background-color: gainsboro;
+        border-radius: 8px;
+        display: none;
+        left: 2em;
+        position: absolute;
+        z-index: 1;
+      }
+
+      li.menu_item {
+        border-bottom: 1px solid white;
+        cursor: pointer;
+        padding: 12px;
+        position: relative;
+      }
+
+      li.menu_item:hover {
+        color: white;
+      }
+
+      li.menu_item:last-child {
+        border-bottom: none;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+    <script src="todo-v2.js"></script>
+  </head>
+  <body>
+    <main>
+      <h1>Todos</h1>
+      <ul id="todos"></ul>
+    </main>
+    <div id="overlay"></div>
+    <div id="del_confirmation">
+      <p>Are you sure you want to delete this todo?</p>
+      <button id="yes">Yes</button>
+      <button id="no">No</button>
+    </div>
+    <script id="todo_list" type="text/x-handlebars">
+      {{#each todoItems}}
+       <li class="todo_item" data-id={{this.id}}>
+        {{this.title}}
+        {{> context_menu }}
+      </li>
+      {{/each}}
+    </script>
+    <script id="context_menu" data-type="partial" type="text/x-handlebars">
+      <div class="menu_box" data-id={{id}}>
+        <ul>
+          <li class="menu_item">Edit Todo</li>
+          <li class="menu_item">Show details</li>
+          <li class="menu_item">Delete</li>
+        </ul>
+      </div>
+    </script>
+  </body>
+</html>

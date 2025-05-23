@@ -1,0 +1,82 @@
+body {
+  background-color: rgb(5, 148, 148);
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-size: 1.3em;
+}
+
+main {
+  max-width: 600px;
+  margin: 4em auto;
+}
+
+h1 {
+  font-size: 2.9em;
+  text-align: center;
+}
+
+ul {
+  list-style: none;
+  pointer-events: none;
+}
+
+li.todo_item {
+  background-color: rgb(247, 251, 254);
+  border-radius: 8px;
+  margin: 10px;
+  padding: 12px 20px;
+  position: relative;
+}
+
+li::after {
+  content: "\274C";
+  font-size: 0.8em;
+  right: 1em;
+  position: absolute;
+  pointer-events: all;
+}
+
+li:hover::after {
+  font-size: 0.9em;
+}
+
+#del_confirmation {
+  background-color: aliceblue;
+  border-radius: 8px;
+  display: none;
+  margin-left: -178px;
+  margin-top: -60px;
+  left: 50%;
+  top: 50%;
+  padding: 1em 1.5em 2em;
+  position: fixed;
+  width: fit-content;
+  z-index: 2;
+}
+
+button {
+  border: none;
+  border-radius: 8px;
+  color: white;
+  padding: 8px 13px;
+}
+
+button#yes {
+background-color: red;
+}
+
+button#no {
+  background-color: green;
+}
+
+#overlay {
+  background-color: rgba(0, 0, 0, 0.4);
+  display: none;
+  height: 100%;
+  width:100%;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  position: fixed;
+  z-index: 1;
+}

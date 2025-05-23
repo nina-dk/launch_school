@@ -1,0 +1,22 @@
+extends layout
+
+block scripts
+  script(src="/javascripts/add-schedules.js")
+
+block content
+  button#add-form-btn Add more schedules
+
+  form(method="POST" action=`${url}`)
+    fieldset
+      legend Schedule 
+        span#scheduleCount 1
+      p
+        label(for="staffName") Staff name:
+        select(name="staffName")    
+      p
+        label(for="date") Date:
+        input(name="date" type="date")
+      p
+        label(for="time") Time:
+        input(name="time" type="time")
+    input(type="submit" value="Submit")

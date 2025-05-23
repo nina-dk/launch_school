@@ -90,8 +90,13 @@ app.use((req, res, next) => {
   next();
 });
 
+let initialFlash;
+
 app.use((req, res, next) => {
   res.locals.flash = req.session.flash;
+  initialFlash = req.session.flash;
+  console.log("in use middleware", res.locals.flash);
+  console.log(req.session.flash === res.locals.flash);
   delete req.session.flash;
   next();
 });
@@ -127,9 +132,13 @@ app.post("/contacts/new",
     let errors = validationResult(req);
     if (!errors.isEmpty()) {
       errors.array().forEach(error => req.flash("error", error.msg));
-
+      console.log('before re-render');
+      console.log(req.session.flash);
+      console.log(req.session.flash === res.locals.flash);
+      console.log('locals', res.locals.flash);
+  
       res.render("new-contact", {
-        flash: req.flash(),
+        // flash: req.flash(),
         ...req.body
       });
     } else {
